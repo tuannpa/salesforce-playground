@@ -47,7 +47,10 @@ class ContactRepository implements ContactRepositoryInterface
                 $result = $response->json();
             }
 
-            $this->retry($response, $this->countTotalContacts());
+            if ($response->failed() && Response::HTTP_UNAUTHORIZED === $response->status()) {
+                $this->salesforceRepository->fetchToken(true);
+                $this->countTotalContacts();
+            }
         } catch (\Exception $e) {
             Log::error('Error occurred when fetching Salesforce contacts data: ' . $e->getMessage());
         }
@@ -81,7 +84,10 @@ class ContactRepository implements ContactRepositoryInterface
                 $result = $response->json();
             }
 
-            $this->retry($response, $this->fetchContacts($query));
+            if ($response->failed() && Response::HTTP_UNAUTHORIZED === $response->status()) {
+                $this->salesforceRepository->fetchToken(true);
+                $this->fetchContacts($query);
+            }
         } catch (\Exception $e) {
             Log::error('Error occurred when fetching Salesforce contacts data: ' . $e->getMessage());
         }
@@ -103,7 +109,10 @@ class ContactRepository implements ContactRepositoryInterface
         try {
             $response = Http::withToken($this->salesforceRepository->getAccessToken())->patch($contactApiUri, $dto);
 
-            $this->retry($response, $this->updateContact($id, $dto));
+            if ($response->failed() && Response::HTTP_UNAUTHORIZED === $response->status()) {
+                $this->salesforceRepository->fetchToken(true);
+                $this->updateContact($id, $dto);
+            }
 
             $result = [
                 'success' => $response->successful()

@@ -39,19 +39,25 @@ sail down -v // Stop the containers, remove volumes
 
 4. Once all containers are up and running (this might take several minutes to install necessary dependencies of the project)
 
-5. Install npm packages
+5. Generate application key
+
+````
+sail php artisan key:generate
+````
+
+6. Install npm packages
 
 ````
 sail npm install
 ````
 
-6. Once all npm packages are installed, start the dev environment
+7. Once all npm packages are installed, start the dev environment
 
 ````
 sail npm run dev
 ````
 
-7. Now open a new browser and navigate to the following URL:
+8. Now open a new browser and navigate to the following URL:
 
 ``http://localhost/contacts``
 
